@@ -77,8 +77,20 @@
   const levelEl = document.getElementById("level");
   const pauseBtn = document.getElementById("pause-btn");
 
+  // ── Fixed logical size; CSS scales it visually ──────────────────────────
   canvas.width = CANVAS_WIDTH;
   canvas.height = CANVAS_HEIGHT;
+
+  // Convert a click/touch position (CSS pixels) → logical canvas coordinates
+  function toLogical(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = CANVAS_WIDTH / rect.width;
+    const scaleY = CANVAS_HEIGHT / rect.height;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY,
+    };
+  }
 
   const images = {};
   let items = [];
@@ -113,7 +125,6 @@
   function randomBetween(min, max) {
     return min + Math.random() * (max - min);
   }
-
   function getSwingSpeed() {
     return BASE_SWING_SPEED + level * SWING_SPEED_PER_LEVEL;
   }
@@ -122,7 +133,6 @@
     const refSize = def.sizes[1];
     return Math.round(def.value * (refSize / size));
   }
-
   function getItemWeight(def, size) {
     const refSize = def.sizes[1];
     return def.weight * (size / refSize);
@@ -132,37 +142,28 @@
     const len = Math.max(length, 1);
     const cosLeft = (WALL_MARGIN - pivotX) / len;
     const cosRight = (CANVAS_WIDTH - WALL_MARGIN - pivotX) / len;
-
     let leftAmp = Math.PI / 2 - 0.04;
     let rightAmp = -(Math.PI / 2 - 0.04);
-
-    if (cosLeft >= -1 && cosLeft <= 0) {
+    if (cosLeft >= -1 && cosLeft <= 0)
       leftAmp = Math.acos(cosLeft) - Math.PI / 2;
-    }
-    if (cosRight >= 0 && cosRight <= 1) {
+    if (cosRight >= 0 && cosRight <= 1)
       rightAmp = Math.acos(cosRight) - Math.PI / 2;
-    }
-
     return { left: leftAmp, right: rightAmp };
   }
 
   function getFloorTipY() {
     return CANVAS_HEIGHT - FLOOR_MARGIN - HOOK_CLAW_DEPTH;
   }
-
   function getMaxHookLength() {
     const angle = swingAngle + Math.PI / 2;
     const cosA = Math.cos(angle);
     const sinA = Math.sin(angle);
     const floorTipY = getFloorTipY();
     let maxLen = (floorTipY - pivotY) / Math.max(sinA, 0.001);
-
-    if (cosA < -0.001) {
+    if (cosA < -0.001)
       maxLen = Math.min(maxLen, (pivotX - WALL_MARGIN) / -cosA);
-    } else if (cosA > 0.001) {
+    else if (cosA > 0.001)
       maxLen = Math.min(maxLen, (CANVAS_WIDTH - WALL_MARGIN - pivotX) / cosA);
-    }
-
     return Math.max(HOOK_REST_LENGTH, maxLen);
   }
 
@@ -236,9 +237,7 @@
       if (gameState !== "playing") return;
       timeLeft -= 1;
       updateHUD();
-      if (timeLeft <= 0) {
-        endLevel();
-      }
+      if (timeLeft <= 0) endLevel();
     }, 1000);
   }
 
@@ -264,16 +263,13 @@
 
   function checkLevelComplete() {
     if (gameState !== "playing") return;
-    if (score >= LEVELS[level].target) {
-      endLevel();
-    }
+    if (score >= LEVELS[level].target) endLevel();
   }
 
   function endLevel() {
     clearInterval(timerInterval);
     gameState = "ended";
     const config = LEVELS[level];
-
     if (score >= config.target) {
       if (level < LEVELS.length - 1) {
         showOverlay(
@@ -370,7 +366,6 @@
       const tip = getHookTip();
       const maxLength = getMaxHookLength();
       const floorTipY = getFloorTipY();
-
       if (checkCollision(tip)) {
         hookState = "retracting";
       } else if (hookLength >= maxLength || tip.y >= floorTipY) {
@@ -404,20 +399,17 @@
           updateHUD();
           checkLevelComplete();
         }
-        if (gameState === "playing") {
-          hookState = "swinging";
-        }
+        if (gameState === "playing") hookState = "swinging";
       }
     }
   }
 
-  // Score popups
+  // ── Score popups ─────────────────────────────────────────────────────────
   let scorePopups = [];
 
   function showScorePopup(x, y, value, isPenalty) {
     scorePopups.push({ x, y, value, isPenalty, life: 1.0 });
   }
-
   function updatePopups() {
     scorePopups = scorePopups.filter((p) => p.life > 0);
     scorePopups.forEach((p) => {
@@ -425,7 +417,6 @@
       p.y -= 1.2;
     });
   }
-
   function drawPopups() {
     scorePopups.forEach((p) => {
       ctx.save();
@@ -442,6 +433,7 @@
     });
   }
 
+  // ── Drawing ───────────────────────────────────────────────────────────────
   function drawBackground() {
     const skyGrad = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
     skyGrad.addColorStop(0, "#e8a050");
@@ -463,15 +455,12 @@
   function drawMiner() {
     const minerImg = images.miner;
     if (!minerImg) return;
-
     const scale = CANVAS_WIDTH / minerImg.width;
     const drawH = minerImg.height * scale;
-    const drawW = CANVAS_WIDTH;
-    ctx.drawImage(minerImg, 0, 0, drawW, Math.min(drawH, MINER_HEIGHT));
+    ctx.drawImage(minerImg, 0, 0, CANVAS_WIDTH, Math.min(drawH, MINER_HEIGHT));
   }
 
   function drawHook() {
-    const angle = swingAngle + Math.PI / 2;
     const tip = getHookTip();
 
     ctx.strokeStyle = "#2a2a2a";
@@ -514,15 +503,12 @@
       if (!item.caught) {
         const def = ITEM_TYPES[item.type];
         let labelColor;
-        if (def.penalty) {
-          labelColor = "rgba(255, 71, 87, 0.95)";
-        } else if (item.type === "diamond") {
+        if (def.penalty) labelColor = "rgba(255, 71, 87, 0.95)";
+        else if (item.type === "diamond")
           labelColor = "rgba(100, 220, 255, 0.95)";
-        } else if (item.type === "ruby") {
-          labelColor = "rgba(255, 100, 130, 0.95)";
-        } else {
-          labelColor = "rgba(255, 215, 0, 0.85)";
-        }
+        else if (item.type === "ruby") labelColor = "rgba(255, 100, 130, 0.95)";
+        else labelColor = "rgba(255, 215, 0, 0.85)";
+
         ctx.fillStyle = labelColor;
         ctx.font = "bold 11px sans-serif";
         ctx.textAlign = "center";
@@ -543,16 +529,27 @@
 
   function gameLoop(timestamp) {
     if (!lastTime) lastTime = timestamp;
-    if (!isPaused) {
-      update();
-    }
+    if (!isPaused) update();
     draw();
     lastTime = timestamp;
     animFrame = requestAnimationFrame(gameLoop);
   }
 
   function init() {
+    // Mouse click
     canvas.addEventListener("click", launchHook);
+
+    // Touch support — tap anywhere on canvas to launch hook
+    canvas.addEventListener(
+      "touchstart",
+      (e) => {
+        e.preventDefault(); // prevent double-fire with click
+        launchHook();
+      },
+      { passive: false },
+    );
+
+    // Keyboard
     document.addEventListener("keydown", (e) => {
       if (e.code === "Space") {
         e.preventDefault();
@@ -565,7 +562,6 @@
     });
 
     pauseBtn.addEventListener("click", togglePause);
-
     overlayBtn.onclick = () => startLevel(0);
 
     Promise.all([
