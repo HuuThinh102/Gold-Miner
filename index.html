@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đào Vàng - Gold Miner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="game-wrapper">
+        <header class="game-header">
+            <h1>Đào Vàng</h1>
+            <div class="hud">
+                <div class="hud-item">
+                    <span class="hud-label">Mục tiêu</span>
+                    <span id="target-score" class="hud-value">$650</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">Tiền</span>
+                    <span id="current-score" class="hud-value">$0</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">Thời gian</span>
+                    <span id="timer" class="hud-value">60</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">Màn</span>
+                    <span id="level" class="hud-value">1</span>
+                </div>
+                <div class="hud-item hud-pause">
+                    <button id="pause-btn" class="btn btn-pause" title="Tạm dừng (P)">⏸ Dừng</button>
+                </div>
+            </div>
+        </header>
+
+        <div id="game-container">
+            <canvas id="game-canvas"></canvas>
+            <div id="overlay" class="overlay hidden">
+                <div class="overlay-content">
+                    <h2 id="overlay-title">Đào Vàng</h2>
+                    <p id="overlay-message">Nhấn Space hoặc Click để thả móc câu!</p>
+                    <button id="overlay-btn" class="btn">Bắt đầu</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="game-footer">
+            <p>Space / Click — thả móc &nbsp;|&nbsp; P — tạm dừng &nbsp;
+            </p>
+            <p>
+                &copy; Trần Hữu Thịnh
+            </p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
