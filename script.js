@@ -574,7 +574,7 @@
     ])
       .then(() => {
         showOverlay(
-          "Đào Vàng",
+          "Đào Anh Yêu",
           "50 màn chơi — móc đung đưa nhanh hơn mỗi màn.",
           "Bắt đầu",
           () => startLevel(0),
