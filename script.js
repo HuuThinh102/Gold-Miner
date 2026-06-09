@@ -20,21 +20,21 @@
   const ITEM_TYPES = {
     diamond: {
       image: "assets/diamond.png",
-      value: 500,
+      value: 700,
       weight: 1,
       sizes: [30, 42, 55],
       penalty: false,
     },
     ruby: {
       image: "assets/ruby.png",
-      value: 300,
+      value: 500,
       weight: 1.5,
       sizes: [32, 45, 58],
       penalty: false,
     },
     gold: {
       image: "assets/gold.png",
-      value: 100,
+      value: 300,
       weight: 2,
       sizes: [40, 55, 70],
       penalty: false,
@@ -48,7 +48,7 @@
     },
     durian: {
       image: "assets/durian.png",
-      value: -100,
+      value: -50,
       weight: 3,
       sizes: [50, 65, 80],
       penalty: true,
@@ -388,7 +388,7 @@
         if (caughtItem) {
           const def = ITEM_TYPES[caughtItem.type];
           if (def.penalty) {
-            score = Math.max(-100, score + caughtItem.value);
+            score = Math.max(-50, score + caughtItem.value);
             showScorePopup(caughtItem.x, caughtItem.y, caughtItem.value, true);
           } else {
             score += caughtItem.value;
