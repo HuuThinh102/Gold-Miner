@@ -425,7 +425,7 @@
       ctx.textAlign = "center";
       ctx.strokeStyle = "rgba(0,0,0,0.7)";
       ctx.lineWidth = 3;
-      const label = p.isPenalty ? `-$100 🍹` : `+$${p.value}`;
+      const label = p.isPenalty ? `-$50 🍹` : `+$${p.value}`;
       ctx.fillStyle = p.isPenalty ? "#ff4757" : "#ffd700";
       ctx.strokeText(label, p.x, p.y);
       ctx.fillText(label, p.x, p.y);
@@ -512,7 +512,7 @@
         ctx.fillStyle = labelColor;
         ctx.font = "bold 11px sans-serif";
         ctx.textAlign = "center";
-        const label = def.penalty ? `-$100` : `$${item.value}`;
+        const label = def.penalty ? `-$50` : `$${item.value}`;
         ctx.fillText(label, item.x, item.y + half + 14);
       }
     }
